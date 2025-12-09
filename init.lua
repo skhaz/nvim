@@ -1,0 +1,52 @@
+
+vim.opt.tabstop = 2
+
+vim.opt.shiftwidth = 2
+
+vim.opt.softtabstop = 2
+
+vim.opt.expandtab = true
+
+vim.opt.termguicolors = true
+
+vim.opt.number = true
+
+vim.opt.relativenumber = true
+
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
+
+require("mason").setup()
+
+require("mason-lspconfig").setup({
+  ensure_installed = {
+    "clangd",
+    "lua_ls",
+    "pyright",
+    "ts_ls",
+    "gopls",
+    "rust_analyzer",
+    "bashls",
+    "jsonls",
+    "yamlls",
+  },
+
+  automatic_enable = true,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local opts = { buffer = args.buf, silent = true }
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+  end,
+})
+
