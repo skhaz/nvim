@@ -11,6 +11,8 @@ vim.opt.termguicolors = true
 
 vim.opt.number = true
 
+vim.opt.autoread = true
+
 vim.opt.relativenumber = true
 
 vim.diagnostic.config({
