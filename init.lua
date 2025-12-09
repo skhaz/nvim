@@ -15,6 +15,8 @@ vim.opt.autoread = true
 
 vim.opt.relativenumber = true
 
+vim.opt.cursorline = true
+
 vim.diagnostic.config({
   virtual_text = true,
   signs = true,
