@@ -10,10 +10,11 @@ vim.opt.number = true
 vim.opt.autoread = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
+vim.opt.signcolumn = "no"
 
 vim.diagnostic.config({
   virtual_text = true,
-  signs = true,
+  signs = false,
   underline = true,
   update_in_insert = false,
   severity_sort = true,
@@ -33,13 +34,21 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  { "nvim-tree/nvim-web-devicons" },
-
   {
     "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      require("nvim-tree").setup()
+      require("nvim-tree").setup({
+        renderer = {
+          icons = {
+            show = {
+              file = false,
+              folder = false,
+              folder_arrow = false,
+              git = false,
+            },
+          },
+        },
+      })
       vim.api.nvim_create_autocmd("VimEnter", {
         callback = function()
           require("nvim-tree.api").tree.open()
