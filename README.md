@@ -1,5 +1,6 @@
 
 
 ```shell
-bash sync.sh
+brew install ripgrep
+brew install --cask font-hack-nerd-font
 ```

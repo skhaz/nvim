@@ -1,20 +1,14 @@
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 vim.opt.tabstop = 2
-
 vim.opt.shiftwidth = 2
-
 vim.opt.softtabstop = 2
-
 vim.opt.expandtab = true
-
 vim.opt.termguicolors = true
-
 vim.opt.number = true
-
 vim.opt.autoread = true
-
 vim.opt.relativenumber = true
-
 vim.opt.cursorline = true
 
 vim.diagnostic.config({
@@ -25,22 +19,101 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-require("mason").setup()
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.uv.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
 
-require("mason-lspconfig").setup({
-  ensure_installed = {
-    "clangd",
-    "lua_ls",
-    "pyright",
-    "ts_ls",
-    "gopls",
-    "rust_analyzer",
-    "bashls",
-    "jsonls",
-    "yamlls",
+require("lazy").setup({
+  { "nvim-tree/nvim-web-devicons" },
+
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("nvim-tree").setup()
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+          require("nvim-tree.api").tree.open()
+        end,
+      })
+    end,
   },
 
-  automatic_enable = true,
+  {
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end,
+  },
+
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = {
+          "clangd",
+          "lua_ls",
+          "pyright",
+          "ts_ls",
+          "gopls",
+          "rust_analyzer",
+          "bashls",
+          "jsonls",
+          "yamlls",
+        },
+        automatic_enable = true,
+      })
+    end,
+  },
+
+  { "neovim/nvim-lspconfig" },
+
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = { "hrsh7th/cmp-nvim-lsp" },
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup({
+        sources = { { name = "nvim_lsp" } },
+        mapping = cmp.mapping.preset.insert({
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<Tab>"] = cmp.mapping.select_next_item(),
+        }),
+      })
+    end,
+  },
+
+  { "hrsh7th/cmp-nvim-lsp" },
+
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("telescope").setup()
+      local builtin = require("telescope.builtin")
+      vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+      vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+      vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
+      vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+    end,
+  },
+
+  { "nvim-lua/plenary.nvim" },
+
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+  },
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -53,21 +126,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
   end,
 })
-
-local cmp = require("cmp")
-
-cmp.setup({
-  sources = { { name = "nvim_lsp" } },
-  mapping = cmp.mapping.preset.insert({
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    ["<Tab>"] = cmp.mapping.select_next_item(),
-  }),
-})
-
-require("telescope").setup()
-
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
-vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
-vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
-vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
