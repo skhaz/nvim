@@ -10,7 +10,7 @@ vim.opt.number = true
 vim.opt.autoread = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
-vim.opt.signcolumn = "no"
+vim.opt.signcolumn = "yes"
 
 vim.diagnostic.config({
   virtual_text = true,
@@ -128,6 +128,22 @@ require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+  },
+
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("gitsigns").setup({
+        signs = {
+          add          = { text = "+" },
+          change       = { text = "~" },
+          delete       = { text = "-" },
+          topdelete    = { text = "-" },
+          changedelete = { text = "~" },
+          untracked    = { text = "?" },
+        },
+      })
+    end,
   },
 })
 
