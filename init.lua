@@ -8,7 +8,7 @@ vim.opt.expandtab = true
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.autoread = true
-vim.opt.relativenumber = true
+-- vim.opt.relativenumber = true
 vim.opt.cursorline = true
 vim.opt.signcolumn = "yes"
 
@@ -52,6 +52,9 @@ require("lazy").setup({
       vim.api.nvim_create_autocmd("VimEnter", {
         callback = function()
           require("nvim-tree.api").tree.open()
+          if vim.fn.argc() > 0 then
+            vim.cmd("wincmd p")
+          end
         end,
       })
     end,
@@ -114,10 +117,10 @@ require("lazy").setup({
         },
       })
       local builtin = require("telescope.builtin")
-      vim.keymap.set("n", "<leader>ff", function()
+      vim.keymap.set("n", "<C-p>", function()
         builtin.find_files({ hidden = true })
       end, {})
-      vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+      vim.keymap.set("n", "<C-g>", builtin.live_grep, {})
       vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
       vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
     end,
@@ -145,6 +148,7 @@ require("lazy").setup({
       })
     end,
   },
+
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
