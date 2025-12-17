@@ -88,11 +88,9 @@ require("lazy").setup({
     end,
   },
 
-  { "neovim/nvim-lspconfig" },
-
   {
     "hrsh7th/nvim-cmp",
-    dependencies = { "hrsh7th/cmp-nvim-lsp" },
+    dependencies = { "hrsh7th/cmp-nvim-lsp", "neovim/nvim-lspconfig" },
     config = function()
       local cmp = require("cmp")
       cmp.setup({
@@ -105,17 +103,10 @@ require("lazy").setup({
     end,
   },
 
-  { "hrsh7th/cmp-nvim-lsp" },
-
   {
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
-      require("telescope").setup({
-        defaults = {
-          hidden = true,
-        },
-      })
       local builtin = require("telescope.builtin")
       vim.keymap.set("n", "<C-p>", function()
         builtin.find_files({ hidden = true })
@@ -126,11 +117,16 @@ require("lazy").setup({
     end,
   },
 
-  { "nvim-lua/plenary.nvim" },
-
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "cpp", "typescript", "python", "lua" },
+        auto_install = true,
+        highlight = { enable = true },
+      })
+    end,
   },
 
   {
@@ -149,10 +145,6 @@ require("lazy").setup({
     end,
   },
 
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-  }
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
