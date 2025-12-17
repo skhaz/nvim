@@ -149,6 +149,10 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+  }
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
