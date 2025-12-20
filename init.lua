@@ -107,6 +107,20 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
+      require("telescope").setup({
+        defaults = {
+          vimgrep_arguments = {
+            "rg",
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--max-columns=0",
+          },
+        },
+      })
       local builtin = require("telescope.builtin")
       vim.keymap.set("n", "<C-p>", function()
         builtin.find_files({ hidden = true })
