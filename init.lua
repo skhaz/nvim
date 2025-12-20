@@ -118,6 +118,7 @@ require("lazy").setup({
             "--column",
             "--smart-case",
             "--max-columns=0",
+            "--fixed-strings",
           },
         },
       })
