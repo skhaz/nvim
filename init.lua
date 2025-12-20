@@ -127,6 +127,20 @@ require("lazy").setup({
         builtin.find_files({ hidden = true })
       end, {})
       vim.keymap.set("n", "<C-g>", builtin.live_grep, {})
+      vim.keymap.set("n", "<C-r>", function()
+        builtin.live_grep({
+          vimgrep_arguments = {
+            "rg",
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--max-columns=0",
+          },
+        })
+      end, {})
       vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
       vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
     end,
