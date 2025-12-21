@@ -60,12 +60,7 @@ require("lazy").setup({
     end,
   },
 
-  {
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end,
-  },
+  { "williamboman/mason.nvim", opts = {} },
 
   {
     "williamboman/mason-lspconfig.nvim",
@@ -78,7 +73,6 @@ require("lazy").setup({
           "pyright",
           "ts_ls",
           "gopls",
-          "rust_analyzer",
           "bashls",
           "jsonls",
           "yamlls",
@@ -107,42 +101,18 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
+      local rg_base = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--max-columns=0" }
+      local rg_literal = vim.list_extend({}, rg_base)
+      rg_literal[#rg_literal + 1] = "--fixed-strings"
       require("telescope").setup({
-        defaults = {
-          vimgrep_arguments = {
-            "rg",
-            "--color=never",
-            "--no-heading",
-            "--with-filename",
-            "--line-number",
-            "--column",
-            "--smart-case",
-            "--max-columns=0",
-            "--fixed-strings",
-          },
-        },
+        defaults = { vimgrep_arguments = rg_literal },
       })
       local builtin = require("telescope.builtin")
-      vim.keymap.set("n", "<C-p>", function()
-        builtin.find_files({ hidden = true })
-      end, {})
-      vim.keymap.set("n", "<C-g>", builtin.live_grep, {})
-      vim.keymap.set("n", "<C-r>", function()
-        builtin.live_grep({
-          vimgrep_arguments = {
-            "rg",
-            "--color=never",
-            "--no-heading",
-            "--with-filename",
-            "--line-number",
-            "--column",
-            "--smart-case",
-            "--max-columns=0",
-          },
-        })
-      end, {})
-      vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
-      vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+      vim.keymap.set("n", "<C-p>", function() builtin.find_files({ hidden = true }) end)
+      vim.keymap.set("n", "<C-g>", builtin.live_grep)
+      vim.keymap.set("n", "<C-r>", function() builtin.live_grep({ vimgrep_arguments = rg_base }) end)
+      vim.keymap.set("n", "<leader>fb", builtin.buffers)
+      vim.keymap.set("n", "<leader>fh", builtin.help_tags)
     end,
   },
 
