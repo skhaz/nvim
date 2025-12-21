@@ -101,12 +101,24 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
-      local rg_base = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--max-columns=0" }
+      local rg_base = {
+        "rg",
+        "--color=never",
+        "--no-heading",
+        "--with-filename",
+        "--line-number",
+        "--column",
+        "--smart-case",
+        "--max-columns=0"
+      }
+
       local rg_literal = vim.list_extend({}, rg_base)
       rg_literal[#rg_literal + 1] = "--fixed-strings"
+
       require("telescope").setup({
         defaults = { vimgrep_arguments = rg_literal },
       })
+
       local builtin = require("telescope.builtin")
       vim.keymap.set("n", "<C-p>", function() builtin.find_files({ hidden = true }) end)
       vim.keymap.set("n", "<C-g>", builtin.live_grep)
