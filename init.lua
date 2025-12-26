@@ -63,14 +63,7 @@ require("lazy").setup({
           },
         },
       })
-      vim.api.nvim_create_autocmd("VimEnter", {
-        callback = function()
-          require("nvim-tree.api").tree.open()
-          if vim.fn.argc() > 0 then
-            vim.cmd("wincmd p")
-          end
-        end,
-      })
+      vim.keymap.set("n", "<C-t>", require("nvim-tree.api").tree.toggle)
     end,
   },
 
