@@ -51,7 +51,9 @@ require("lazy").setup({
   {
     "nvim-tree/nvim-tree.lua",
     config = function()
+      local api = require("nvim-tree.api")
       require("nvim-tree").setup({
+        view = { side = "right" },
         renderer = {
           icons = {
             show = {
@@ -62,8 +64,12 @@ require("lazy").setup({
             },
           },
         },
+        on_attach = function(bufnr)
+          api.config.mappings.default_on_attach(bufnr)
+          vim.keymap.set("n", "<C-t>", api.tree.toggle, { buffer = bufnr })
+        end,
       })
-      vim.keymap.set("n", "<C-t>", require("nvim-tree.api").tree.toggle)
+      vim.keymap.set("n", "<C-t>", api.tree.toggle)
     end,
   },
 
