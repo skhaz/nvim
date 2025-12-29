@@ -168,12 +168,6 @@ require("lazy").setup({
       })
     end,
   },
-
-  {
-    "ThePrimeagen/harpoon",
-    dependencies = { "nvim-lua/plenary.nvim" },
-  },
-
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
