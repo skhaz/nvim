@@ -48,6 +48,17 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 require("lazy").setup({
+  --  -- {
+  --"navarasu/onedark.nvim",
+  --  priority = 1000,
+  --  config = function()
+  --    require('onedark').setup {
+  --      style = 'darker'
+  --    }
+  --
+  --    require('onedark').load()
+  --  end
+ -- },
   {
     "nvim-tree/nvim-tree.lua",
     config = function()
@@ -85,7 +96,7 @@ require("lazy").setup({
           "lua_ls",
           "pyright",
           "ts_ls",
-          "gopls",
+          -- "gopls",
           "bashls",
           "jsonls",
           "yamlls",
@@ -143,12 +154,16 @@ require("lazy").setup({
 
   {
     "nvim-treesitter/nvim-treesitter",
+    lazy = false,
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
+      require("nvim-treesitter").setup({
         ensure_installed = { "cpp", "typescript", "python", "lua" },
-        auto_install = true,
-        highlight = { enable = true },
+      })
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          pcall(vim.treesitter.start)
+        end,
       })
     end,
   },
