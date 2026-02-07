@@ -52,6 +52,40 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
+do
+  local pair_map = {
+    [".c"]   = { ".h" },
+    [".cpp"] = { ".hpp", ".hxx", ".hh", ".h" },
+    [".cxx"] = { ".hxx", ".hpp", ".hh", ".h" },
+    [".cc"]  = { ".hh", ".hpp", ".hxx", ".h" },
+    [".h"]   = { ".c", ".cpp", ".cxx", ".cc" },
+    [".hpp"] = { ".cpp", ".cxx", ".cc" },
+    [".hxx"] = { ".cxx", ".cpp", ".cc" },
+    [".hh"]  = { ".cc", ".cpp", ".cxx" },
+  }
+
+  vim.api.nvim_create_autocmd("BufReadPost", {
+    group = augroup,
+    pattern = { "*.c", "*.cpp", "*.cxx", "*.cc", "*.h", "*.hpp", "*.hxx", "*.hh" },
+    callback = function()
+      if vim.fn.winnr("$") ~= 1 then return end
+      local path = vim.api.nvim_buf_get_name(0)
+      local stem, ext = path:match("^(.+)(%.%w+)$")
+      if not stem or not pair_map[ext] then return end
+      for _, candidate in ipairs(pair_map[ext]) do
+        local pair_path = stem .. candidate
+        if vim.uv.fs_stat(pair_path) then
+          vim.schedule(function()
+            vim.cmd("vsplit " .. vim.fn.fnameescape(pair_path))
+            vim.cmd("wincmd h")
+          end)
+          return
+        end
+      end
+    end,
+  })
+end
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
@@ -109,11 +143,13 @@ require("lazy").setup({
       ensure_installed = {
         "clangd", "lua_ls", "pyright", "ts_ls",
         -- "gopls",
-        "bashls", "jsonls", "yamlls",
+        "bashls", "jsonls", "yamlls", "marksman",
       },
       automatic_enable = true,
     },
   },
+
+  { "b0o/schemastore.nvim", lazy = true },
 
   {
     "hrsh7th/nvim-cmp",
@@ -152,7 +188,7 @@ require("lazy").setup({
     build = ":TSUpdate",
     config = function()
       require("nvim-treesitter").setup()
-      local wanted = { "cpp", "typescript", "python", "lua" }
+      local wanted = { "cpp", "typescript", "python", "lua", "json", "yaml", "markdown", "markdown_inline" }
       local installed = require("nvim-treesitter").get_installed()
       local missing = vim.tbl_filter(function(l) return not vim.list_contains(installed, l) end, wanted)
       if #missing > 0 then require("nvim-treesitter").install(missing) end
@@ -174,6 +210,24 @@ require("lazy").setup({
         changedelete = { text = "~" },
         untracked    = { text = "?" },
       },
+    },
+  },
+})
+
+vim.lsp.config("jsonls", {
+  settings = {
+    json = {
+      schemas = require("schemastore").json.schemas(),
+      validate = { enable = true },
+    },
+  },
+})
+
+vim.lsp.config("yamlls", {
+  settings = {
+    yaml = {
+      schemaStore = { enable = false, url = "" },
+      schemas = require("schemastore").yaml.schemas(),
     },
   },
 })
