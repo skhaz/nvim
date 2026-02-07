@@ -147,9 +147,17 @@ require("lazy").setup({
     lazy = false,
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter").setup({
-        ensure_installed = { "cpp", "typescript", "python", "lua" },
-      })
+      require("nvim-treesitter").setup()
+
+      local langs = { "cpp", "typescript", "python", "lua" }
+      local installed = require("nvim-treesitter").get_installed()
+      local to_install = vim.tbl_filter(function(l)
+        return not vim.list_contains(installed, l)
+      end, langs)
+      if #to_install > 0 then
+        require("nvim-treesitter").install(to_install)
+      end
+
       vim.api.nvim_create_autocmd("FileType", {
         callback = function()
           pcall(vim.treesitter.start)
