@@ -5,7 +5,6 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 vim.opt.expandtab = true
-vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.autoread = true
 -- vim.opt.relativenumber = true
@@ -48,17 +47,8 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 require("lazy").setup({
-  --  -- {
-  --"navarasu/onedark.nvim",
-  --  priority = 1000,
-  --  config = function()
-  --    require('onedark').setup {
-  --      style = 'darker'
-  --    }
-  --
-  --    require('onedark').load()
-  --  end
- -- },
+  { "catppuccin/nvim", name = "catppuccin", priority = 3000 },
+
   {
     "nvim-tree/nvim-tree.lua",
     config = function()
@@ -195,3 +185,5 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
   end,
 })
+
+vim.cmd.colorscheme "catppuccin-frappe"
