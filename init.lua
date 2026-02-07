@@ -47,8 +47,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 require("lazy").setup({
-  { "catppuccin/nvim", name = "catppuccin", priority = 3000 },
-
   {
     "nvim-tree/nvim-tree.lua",
     config = function()
@@ -167,6 +165,16 @@ require("lazy").setup({
   },
 
   {
+    "AlexvZyl/nordic.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("nordic").setup({})
+      vim.cmd.colorscheme("nordic")
+    end,
+  },
+
+  {
     "lewis6991/gitsigns.nvim",
     config = function()
       require("gitsigns").setup({
@@ -194,4 +202,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.cmd.colorscheme "catppuccin-frappe"
