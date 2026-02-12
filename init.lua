@@ -171,7 +171,10 @@ require("lazy").setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("telescope").setup({
-        defaults = { vimgrep_arguments = rg_literal },
+        defaults = {
+          vimgrep_arguments = rg_literal,
+          file_ignore_patterns = { "%.git/" },
+        },
       })
       local b = require("telescope.builtin")
       vim.keymap.set("n", "<C-p>", function() b.find_files({ hidden = true }) end, { desc = "Find files" })
