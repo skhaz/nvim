@@ -1,4 +1,4 @@
-local augroup = require("autocmds")
+local augroup = vim.api.nvim_create_augroup("LspGroup", { clear = true })
 
 vim.lsp.config("jsonls", {
   settings = {

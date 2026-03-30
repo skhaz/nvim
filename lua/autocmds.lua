@@ -17,38 +17,34 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function() vim.hl.on_yank({ timeout = 200 }) end,
 })
 
-do
-  local pairs = {
-    [".c"]   = { ".h" },
-    [".cpp"] = { ".hpp", ".hxx", ".hh", ".h" },
-    [".cxx"] = { ".hxx", ".hpp", ".hh", ".h" },
-    [".cc"]  = { ".hh",  ".hpp", ".hxx", ".h" },
-    [".h"]   = { ".c",   ".cpp", ".cxx", ".cc" },
-    [".hpp"] = { ".cpp", ".cxx", ".cc" },
-    [".hxx"] = { ".cxx", ".cpp", ".cc" },
-    [".hh"]  = { ".cc",  ".cpp", ".cxx" },
-  }
+local extensions = {
+  [".c"]   = { ".h" },
+  [".cpp"] = { ".hpp", ".hxx", ".hh", ".h" },
+  [".cxx"] = { ".hxx", ".hpp", ".hh", ".h" },
+  [".cc"]  = { ".hh",  ".hpp", ".hxx", ".h" },
+  [".h"]   = { ".c",   ".cpp", ".cxx", ".cc" },
+  [".hpp"] = { ".cpp", ".cxx", ".cc" },
+  [".hxx"] = { ".cxx", ".cpp", ".cc" },
+  [".hh"]  = { ".cc",  ".cpp", ".cxx" },
+}
 
-  vim.api.nvim_create_autocmd("BufReadPost", {
-    group   = augroup,
-    pattern = { "*.c", "*.cpp", "*.cxx", "*.cc", "*.h", "*.hpp", "*.hxx", "*.hh" },
-    callback = function()
-      if vim.fn.winnr("$") ~= 1 then return end
-      local path = vim.api.nvim_buf_get_name(0)
-      local stem, ext = path:match("^(.+)(%.%w+)$")
-      if not stem or not pairs[ext] then return end
-      for _, alt in ipairs(pairs[ext]) do
-        local other = stem .. alt
-        if vim.uv.fs_stat(other) then
-          vim.schedule(function()
-            vim.cmd("vsplit " .. vim.fn.fnameescape(other))
-            vim.cmd("wincmd h")
-          end)
-          return
-        end
+vim.api.nvim_create_autocmd("BufReadPost", {
+  group   = augroup,
+  pattern = { "*.c", "*.cpp", "*.cxx", "*.cc", "*.h", "*.hpp", "*.hxx", "*.hh" },
+  callback = function()
+    if vim.fn.winnr("$") ~= 1 then return end
+    local path = vim.api.nvim_buf_get_name(0)
+    local stem, ext = path:match("^(.+)(%.%w+)$")
+    if not stem or not extensions[ext] then return end
+    for _, alt in ipairs(extensions[ext]) do
+      local other = stem .. alt
+      if vim.uv.fs_stat(other) then
+        vim.schedule(function()
+          vim.cmd("vsplit " .. vim.fn.fnameescape(other))
+          vim.cmd("wincmd h")
+        end)
+        return
       end
-    end,
-  })
-end
-
-return augroup
+    end
+  end,
+})

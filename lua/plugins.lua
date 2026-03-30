@@ -10,13 +10,9 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-local ripgrep = {
-  "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--max-columns=0",
-}
+local ripgrep = { "rg", "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--max-columns=0", "--fixed-strings" }
 
-local rg_literal = vim.list_extend(vim.list_extend({}, ripgrep), { "--fixed-strings" })
-
-local augroup = require("autocmds")
+local augroup = vim.api.nvim_create_augroup("PluginsGroup", { clear = true })
 
 require("lazy").setup({
 
@@ -87,14 +83,14 @@ require("lazy").setup({
     config = function()
       require("telescope").setup({
         defaults = {
-          vimgrep_arguments    = rg_literal,
+          vimgrep_arguments    = ripgrep,
           file_ignore_patterns = { "%.git/" },
         },
       })
       local b = require("telescope.builtin")
       vim.keymap.set("n", "<C-p>",       function() b.find_files({ hidden = true }) end)
       vim.keymap.set("n", "<C-g>",       b.live_grep)
-      vim.keymap.set("n", "<C-r>",       function() b.live_grep({ vimgrep_arguments = ripgrep }) end)
+      vim.keymap.set("n", "<C-r>",       function() b.live_grep({ vimgrep_arguments = vim.tbl_filter(function(a) return a ~= "--fixed-strings" end, ripgrep) }) end)
       vim.keymap.set("n", "<leader>fb",  b.buffers)
       vim.keymap.set("n", "<leader>fh",  b.help_tags)
     end,
